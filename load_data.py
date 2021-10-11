@@ -34,7 +34,21 @@ for i in range(10):
     print("label num "+str(i)+": ",train_y100label[i*10])
     pyplot.show()
 
-#suppression des veleur qui ne servent plus
-del X_train,Y_train,train_X,train_y,train_filter,i,j,counter
+
 
 #Il ne reste plus qu'à les melanger pour avoir un truc uniforme et sans biais
+# Using zip() + * operator + shuffle()
+import random
+   
+# Shuffle two lists with same order
+# Using zip() + * operator + shuffle()
+temp = list(zip(train_y100label, train_X100label))
+random.shuffle(temp)
+train_y100label, train_X100label = zip(*temp)
+
+train_y100label = np.array(train_y100label).astype('uint8')
+train_X100label = np.array(train_X100label).astype('uint8')
+
+
+#suppression des veleur qui ne servent plus
+del X_train,Y_train,train_X,train_y,train_filter,i,j,counter,temp
