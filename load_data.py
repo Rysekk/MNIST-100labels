@@ -1,5 +1,6 @@
 from keras.datasets import mnist
 #Import de la base de donnée MNIST
+
 (train_X, train_y), (test_X, test_y) = mnist.load_data()
 
 print('X_train: ' + str(train_X.shape))
@@ -18,7 +19,6 @@ train_y100label = np.zeros(shape=(100)).astype('uint8')
 counter = 0
 for i in range(10):
     train_filter = np.where(train_y == [i])
-    test_filter = np.where(test_y == [i])
     for j in range(10):
         X_train, Y_train = train_X[train_filter], train_y[train_filter]
         
@@ -35,6 +35,6 @@ for i in range(10):
     pyplot.show()
 
 #suppression des veleur qui ne servent plus
-del X_train,Y_train,train_X,train_y,train_filter,test_filter,i,j,counter
+del X_train,Y_train,train_X,train_y,train_filter,i,j,counter
 
 #Il ne reste plus qu'à les melanger pour avoir un truc uniforme et sans biais
