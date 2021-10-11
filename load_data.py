@@ -1,4 +1,5 @@
 from keras.datasets import mnist
+
 #Import de la base de donnée MNIST
 (train_X, train_y), (test_X, test_y) = mnist.load_data()
 
@@ -20,8 +21,7 @@ for i in range(10):
     train_filter = np.where(train_y == [i])
     test_filter = np.where(test_y == [i])
     for j in range(10):
-        X_train, Y_train = train_X[train_filter], train_y[train_filter]
-        
+        X_train, Y_train = train_X[train_filter], train_y[train_filter] 
         train_X100label[counter] = X_train[counter]
         train_y100label[counter] = Y_train[counter]
         counter+=1
