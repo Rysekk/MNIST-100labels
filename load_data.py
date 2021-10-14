@@ -1,4 +1,5 @@
 from keras.datasets import mnist
+import tensorflow as tf
 #Import de la base de donnée MNIST
 
 (train_X, train_y), (test_X, test_y) = mnist.load_data()
@@ -46,9 +47,95 @@ temp = list(zip(train_y100label, train_X100label))
 random.shuffle(temp)
 train_y100label, train_X100label = zip(*temp)
 
-train_y100label = np.array(train_y100label).astype('uint8')
-train_X100label = np.array(train_X100label).astype('uint8')
+y_train = np.array(train_y100label).astype('uint8')
+x_train = np.array(train_X100label).astype('uint8')
+
+#test Resnet50 avec les 100 labels
 
 
-#suppression des veleur qui ne servent plus
-del X_train,Y_train,train_X,train_y,train_filter,i,j,counter,temp
+#data processing
+
+#pour le train
+x_train = x_train.reshape((100,28,28,1))
+x_train = x_train.repeat(3,-1)
+x_train = x_train.astype('float32')/255
+x_train = tf.image.resize(x_train,[32,32])
+x_train = tf.convert_to_tensor(x_train)
+
+#pour le test
+#on ajoute un canneau 
+x_test = test_X.reshape((10000,28,28,1))
+#pour le rgb (donc = 3)
+x_test = x_test.repeat(3,-1)
+#on normalise
+x_test = x_test.astype('float32')/255
+#on reshape l'image pour quelle corresponde a l'input du resnet50 qui doit etre du 32 x 32 
+x_test = tf.image.resize(x_test,[32,32])
+#on convertie le train en tensor
+x_test = tf.convert_to_tensor(x_test)
+
+#pour les y on les transformes en one hot encoder
+from tensorflow.keras.utils import to_categorical
+y_test = to_categorical(test_y)
+y_train = to_categorical(y_train)
+
+del X_train,Y_train,train_X,train_y,train_filter,i,j,counter,temp,test_X,test_y,train_y100label,train_X100label
+
+#implementation resnet50
+from keras.layers import  Input, Dense, Flatten
+from keras.models import Model
+from tensorflow.keras.applications.resnet50 import ResNet50
+import numpy as np
+
+#importation du resnet 
+inp = tf.keras.Input(shape=(32,32,3))
+resnet = ResNet50(include_top=False,  pooling='none', input_tensor= inp,  weights='imagenet')
+
+#on ajoute un Dense layer et on l'ajoute comme output pour la classification 
+X = Flatten()(resnet.output)
+prediction = Dense(10, activation='softmax',name='class_layer')(X)
+
+model = Model(inputs = resnet.input, outputs = prediction)
+
+model.summary()
+
+model.compile(loss="categorical_crossentropy",optimizer="adam",metrics=["accuracy"])
+
+historique = model.fit(x_train,y_train,validation_data=(x_test,y_test),epochs=20,verbose=1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
