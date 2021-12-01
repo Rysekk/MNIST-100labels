@@ -1,4 +1,4 @@
-# MNIST-100labels
+# SEMI-SUPERVISED GAN (SGAN) MNIST DATASET
 
 NoteBook sur l'implementation d'un GAN semi-supervisé a l'aide du papier de recherche "Improved Techniques for Training GANs" 
 
